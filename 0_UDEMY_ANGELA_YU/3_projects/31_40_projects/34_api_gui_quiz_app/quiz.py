@@ -1,5 +1,3 @@
-import html
-
 class Quiz:
     def __init__(self,q_list):
         self.question_number = 0
@@ -13,10 +11,8 @@ class Quiz:
     def next_question(self):
         self.current_question = self.question_list[self.question_number]
         self.question_number += 1
-        question = html.unescape(self.current_question.question)
-        answer = self.current_question.answer
         
-        return f"Q.{self.question_number}: {question}"
+        return f"Q.{self.question_number}: {self.current_question.question}"
         
     def check_answer(self,user_answer):
         if user_answer.lower() == self.current_question.answer.lower():

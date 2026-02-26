@@ -2,12 +2,13 @@ from data import questions_data
 from question_model import Question
 from quiz import Quiz
 from ui import QuizInterface
+import html
 
 
 questions_bank = []
 
 for item in questions_data:
-    question = item['question']
+    question = html.unescape(item['question'])
     answer = item['correct_answer']
     new_question = Question(question=question, answer=answer)
     questions_bank.append(new_question)

@@ -1,16 +1,24 @@
+from question_model import QuestionModel
 from data import question_data
+from quiz import QuizBrain
+import html
 
-class Question:
-    def __init__(self,question,answer):
-        self.question = question
-        self.answer = answer
-        
-question_lists = []
+question_list = []
+
 for item in question_data:
-    item_question = item['question']
-    item_answer = item['correct_answer']
-    next_question = Question(item_question,item_answer)
-    question_lists.append(next_question)
-    
+    get_question = html.unescape(item["question"])
+    get_answer = item['correct_answer']
+    new_question_model = QuestionModel(question=get_question, answer=get_answer)
+    question_list.append(new_question_model)
 
-print(question_lists)
+
+quiz = QuizBrain(question_list)
+
+while quiz.still_has_question:
+    quiz.next_question()
+    
+print("Goodby! Finished the quiz.")
+print(f"Your Current Score: {quiz.score}")
+
+
+
