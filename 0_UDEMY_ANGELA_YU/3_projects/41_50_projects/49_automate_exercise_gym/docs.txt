@@ -1,0 +1,161 @@
+#########
+Step 1: Setup, Chrome Profile, and Basic Navigation
+🏋️ Selenium Gym Booking Automation Challenge
+Welcome to the Snack & Lift Gym automation challenge! In this project, you'll be creating a bot that automatically books gym classes for you. Because who has time to manually book classes when you could be ... snacking? 🍕
+
+🎯 Project Overview
+You'll be automating the booking process for the Snack & Lift gym website using Selenium and Python. By the end, your bot will be able to:
+
+Log in automatically
+
+Book specific gym classes
+
+Handle waitlists
+
+Deal with network errors like a pro
+
+🚀 Let's Get Started! Initial Setup - Getting Your Gym Membership 💪
+Before we start coding, let's get you signed up at our virtual gym:
+
+Configure Selenium to stay open using the Chrome option:
+
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_experimental_option("detach", True)
+Give Selenium it's own user profile. Have your script create a directory in your project folder to store your Chrome Profile information with:
+
+user_data_dir = os.path.join(os.getcwd(), "chrome_profile")
+
+
+
+Tell your Chrome Driver to use the directory you specified to store a "profile". That way every time you quit Chrome and re-run your Selenium script, it keeps all the preferences and settings from your profile.
+
+chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
+
+Run Selenium and have it navigate to the gym website: https://appbrewery.github.io/gym/
+
+Create your account manually in the browser that Selenium opens (yes, manually - just this once, like you would with a real gym):
+
+Click "Join Today... Or Tomorrow"
+
+Use an email format like: yourname@test.com
+
+Choose a password you'll remember
+
+Complete the registration
+
+# Add your credentials at the top of your script
+ACCOUNT_EMAIL = "your_email@test.com"  # The email you registered with
+ACCOUNT_PASSWORD = "your_password"      # The password you used during registration
+GYM_URL = "https://appbrewery.github.io/gym/"
+
+
+Don't pick a password like 12346 because Chrome will bring up a warning that will mess up your Selenium script! I should have picked a better password in the intro video. Don't do what I did! 🤦🏻‍♀️
+
+##########
+Step 2: Automated Login
+🔐 Automated Login - No More Manual Sign-ins!
+
+
+The first step is logging you into the gym site. I've added Selenium friendly IDs to the gym application so that the elements are easy to identify. Your mission:
+
+Write code to:
+
+Click the login button
+
+Fill in your email and password
+
+Submit the form
+
+Verify you're logged in by checking for the "Class Schedule" page
+
+Pro tip 1: Use WebDriverWait instead of time.sleep() . Docs with example:
+
+https://www.selenium.dev/documentation/webdriver/waits/
+
+
+
+Pro tip 2: Use presence_of_element_located to verify that an element is present on the page.
+
+Link to presence_of_element_located docs
+
+
+
+What success looks like: Your browser automatically logs in and you see the class schedule. Login happens pretty quickly!
+
+
+#########
+Step 3: Book the upcoming Tuesday class
+Book Your First Class - Tuesday at 6pm 📅
+Now for the fun part - actually booking a class!  Figuring out how to use the selectors for this is also the hard part!
+
+Your task:
+
+Find the next Tuesday 6pm class (any type - Yoga, Spin, or HIIT)
+
+Click the "Book Class" or "Join Waitlist" button
+
+Print a success message like: ✓ Booked: Spin Class on Tue, Aug 12 (yes, you can add emojis to the string so that they add some colour to the console 🤗)
+
+
+
+
+
+Hints:
+
+The default filter shows "Next 7 Days" - perfect!
+
+Parse the day and time from each class card
+
+Look for patterns in the HTML structure
+
+After Selenium finishes, Chrome should stay open so you can manually check your booking on the "My Bookings" page like this:
+
+
+
+
+
+
+One more hint...
+Right click to inspect various elements in the class table. Do you see a pattern in the naming of IDs? 
+
+
+
+
+Say there are paragraph elements like this:
+
+<p id="class-time-123">Tuesday</p>
+
+<p id="something-456">Blah blah</p>
+
+<p id="class-time-789">Thursday</p>
+
+Here's how you might select the first and third paragraph elements that share the same naming convention with your selector:
+
+
+
+find_element(By.CSS_SELECTOR, "p[id^='class-time-']")
+This part is key:
+
+"p[id^='class-time-']"
+
+
+
+p → Match a <p> (paragraph) element.
+
+[id^='class-time-'] → Match only if its id starts with "class-time-".
+
+
+
+Ancestors: How to find a parent 🧑‍🧒‍🧒
+
+We'll need to figure out if a class takes place on a Tuesday. But the day is not on the card itself - it's in the parent. So how do we access the parent if we've found the class cards? 
+
+You can think of the HTML DOM like a family tree:
+
+Child =  card element
+
+Parent = the element directly wrapping the card (e.g., a div)
+
+Grandparent = the wrapper around the parent one level up
+
+All of those wrappers are ancestors. This means we can use ancestor::div to walk upward to the parent and list every wrapping <div> on the way to the root of the page. This should help you locate the parents for the cards.
